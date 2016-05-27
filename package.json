@@ -1,0 +1,36 @@
+{
+  "name": "es-search",
+  "version": "0.1.0",
+  "description": "simple tool for es query cli",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lusionx/es-search.git"
+  },
+  "bin": {
+    "es-search": "./bin/search"
+  },
+  "keywords": [
+    "es",
+    "query",
+    "mqes",
+    "dump"
+  ],
+  "author": "liu xing",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/lusionx/es-search/issues"
+  },
+  "homepage": "https://github.com/lusionx/es-search#readme",
+  "dependencies": {
+    "async": "^1.5.2",
+    "commander": "^2.9.0",
+    "lodash": "^3.10.1",
+    "log4js": "^0.6.36",
+    "mqes": "^1.7.20",
+    "request": "^2.72.0"
+  }
+}
