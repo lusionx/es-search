@@ -65,6 +65,16 @@ scrollFetch = (iter, callback) ->
     way.ls.length > 0
   async.doWhilst step, test, callback
 
+delIter = (e, callback) ->
+  [protocol, __, domain] = program.database.split '/'
+  par =
+    method: 'DELETE'
+    uri: [protocol, '', domain, e._index, e._type, e._id].join '/'
+  request par, (err, resp, body) ->
+    return callback() or logger.error err if err
+    logger.debug body
+    callback()
+
 
 main = () ->
   program.version '0.1.1'
@@ -73,8 +83,9 @@ main = () ->
     .option '-f --from [index]', 'from index number'
     .option '-s --size [number]', 'size number'
     .option '--source [f1,f2...]', 'params _source'
-    .option '--sort [field:desc/asc]', 'sort'
+    .option '--sort [field:desc/asc]', 'sort by field'
     .option '--scroll', 'use scroll & echo with console.error, 使用2>>xx.log将输入重定向'
+    .option '--delete [yes/Y]', 'delete query result'
     .parse process.argv
 
   if not program.query or not program.database
@@ -85,7 +96,10 @@ main = () ->
       wirte = (e) -> console.error '%j', e
       scrollFetch wirte, (err) ->
         logger.info 'scroll fin!!'
-    _.each list, (e) ->
-      logger.debug '%j', e
+    else if program.delete in ['yes', 'Y']
+      async.eachLimit list, 10, delIter
+    else
+      _.each list, (e) ->
+        logger.debug '%j', e
 
 module.exports = {main}
