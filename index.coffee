@@ -15,7 +15,8 @@ queryDate = (options, callback) ->
     qs:
       size: +program.size or 10
       from: v if v = +program.from
-      _source: v if v = program._source
+      _source: v if v = program.source
+      sort: v if v = program.sort
     json: mqes.convQuery JSON.parse program.query
   if program.scroll
     par.qs =
@@ -71,6 +72,8 @@ main = () ->
     .option '-q --query <json of mqes>', 'eg. {"a":1}'
     .option '-f --from [index]', 'from index number'
     .option '-s --size [number]', 'size number'
+    .option '--source [f1,f2...]', 'params _source'
+    .option '--sort [field:desc/asc]', 'sort'
     .option '--scroll', 'use scroll & echo with console.error, 使用2>>xx.log将输入重定向'
     .parse process.argv
 
