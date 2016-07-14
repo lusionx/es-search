@@ -20,11 +20,14 @@ queryDate = (options, callback) ->
     json: mqes.convQuery JSON.parse program.query
   if program.scroll
     par.qs =
+      size: +program.size or 10
+      _source: v if v = program.source
       scroll: '1m'
       search_type: 'scan'
   logger.debug '%j', par
   request par, (err, resp, body) ->
-    logger.error err if err
+    return logger.error err if err
+    return logger.error '%j', body if body.error
     SCROLL_ID = v if v = body._scroll_id
     result = body.hits.hits
     cc = body.hits.total
@@ -80,10 +83,10 @@ main = () ->
   program.version '0.1.1'
     .option '-d --database <i>', 'http://es.api.com/xx/yy/_search'
     .option '-q --query <json of mqes>', 'eg. {"a":1}'
-    .option '-f --from [index]', 'from index number'
-    .option '-s --size [number]', 'size number'
+    .option '-f --from [index]', 'from index number; disable when --scroll'
+    .option '-s --size [number]', 'size number; the number of results per shard when --scroll'
     .option '--source [f1,f2...]', 'params _source'
-    .option '--sort [field:desc/asc]', 'sort by field'
+    .option '--sort [field:desc/asc]', 'sort by field; disable when --scroll'
     .option '--scroll', 'use scroll & echo with console.error, 使用2>>xx.log将输入重定向'
     .option '--delete [yes/Y]', 'delete query result'
     .parse process.argv
