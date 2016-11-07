@@ -19,11 +19,10 @@ queryDate = (options, callback) ->
       sort: v if v = program.sort
     json: mqes.convQuery JSON.parse program.query
   if program.scroll
-    par.qs =
-      size: +program.size or 10
-      _source: v if v = program.source
+    _.extend par.qs,
       scroll: '1m'
       search_type: 'scan'
+  _.extend par.json, JSON.parse(v) if v = program.extend
   logger.debug '%j', par
   request par, (err, resp, body) ->
     return logger.error err if err
@@ -89,6 +88,7 @@ main = () ->
     .option '--sort [field:desc/asc]', 'sort by field; disable when --scroll'
     .option '--scroll', 'use scroll & echo with console.error, 使用2>>xx.log将输入重定向'
     .option '--delete [yes/Y]', 'delete query result'
+    .option '--extend [json]', 'merge to request body, eg. script_fields'
     .parse process.argv
 
   if not program.query or not program.database
