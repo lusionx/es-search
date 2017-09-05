@@ -18,6 +18,8 @@ queryDate = (options, callback) ->
       _source: v if v = program.source
       sort: v if v = program.sort
     json: mqes.convQuery JSON.parse program.query
+  if program.q2
+    par.json = query: bool: filter:  _.get par.json, "query.filtered.filter"
   if program.scroll
     _.extend par.qs,
       scroll: '1m'
@@ -89,6 +91,7 @@ main = () ->
     .option '--scroll', 'use scroll & echo with console.error, 使用2>>xx.log将输入重定向'
     .option '--delete [yes/Y]', 'delete query result'
     .option '--extend [json]', 'merge to request body, eg. script_fields'
+    .option '--q2', '默认采用1.x的query写法, 加人此参数后采用es2.x(5.x)的query写法'
     .parse process.argv
 
   if not program.query or not program.database
