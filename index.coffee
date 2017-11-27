@@ -21,9 +21,13 @@ queryDate = (options, callback) ->
   if program.q2
     par.json = query: bool: filter:  _.get par.json, "query.filtered.filter"
   if program.scroll
-    _.extend par.qs,
-      scroll: '1m'
-      search_type: 'scan'
+    if program.q2
+      _.extend par.qs,
+        scroll: '1m'
+    else
+      _.extend par.qs,
+        scroll: '1m'
+        search_type: 'scan'
   _.extend par.json, JSON.parse(v) if v = program.extend
   logger.debug '%j', par
   request par, (err, resp, body) ->
