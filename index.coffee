@@ -28,12 +28,19 @@ queryDate = (options, callback) ->
       _.extend par.qs,
         scroll: '1m'
         search_type: 'scan'
+  if fk = program.aggsTerms
+    aggs = {}
+    aggs[fk] = terms: field: fk
+    par.json.aggs = aggs
   _.extend par.json, JSON.parse(v) if v = program.extend
   logger.debug '%j', par
   request par, (err, resp, body) ->
     return logger.error err if err
     return logger.error '%j', body if body.error
     SCROLL_ID = v if v = body._scroll_id
+    if body.aggregations and (v = program.aggsTerms) and aggv = body.aggregations[v].buckets
+      for bu in aggv
+        console.log bu
     result = body.hits.hits
     cc = body.hits.total
     logger.info 'total %d / %d', result.length, cc
@@ -96,6 +103,7 @@ main = () ->
     .option '--delete [yes/Y]', 'delete query result'
     .option '--extend [json]', 'merge to request body, eg. script_fields'
     .option '--q2', '默认采用1.x的query写法, 加人此参数后采用es2.x(5.x)的query写法'
+    .option '--aggs-terms [f1]', 'terms of aggregations'
     .parse process.argv
 
   if not program.query or not program.database
@@ -113,3 +121,4 @@ main = () ->
         logger.debug '%j', e
 
 module.exports = {main}
+main() if process.argv[1] is __filename
