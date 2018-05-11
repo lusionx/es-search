@@ -50,16 +50,14 @@ queryDate = (options, callback) ->
 fetch = (callback) ->
   [protocol, __, domain] = program.database.split '/'
   par =
-    method: 'GET'
+    method: 'POST'
     uri: [protocol, '//', domain, '/_search/scroll'].join ''
-    qs:
+    json:
       scroll_id: SCROLL_ID
       scroll: '1m'
   #logger.debug 'fetch %j', par
   request par, (err, resp, body) ->
-    try obj = JSON.parse body
-    return callback null, [] if not obj
-    body = obj
+    return callback null, [] if not body
     result = body.hits.hits
     delete body.hits.hits
     #logger.debug '%j', body
