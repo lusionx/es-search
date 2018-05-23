@@ -52,9 +52,14 @@ fetch = (callback) ->
   par =
     method: 'POST'
     uri: [protocol, '//', domain, '/_search/scroll'].join ''
-    json:
-      scroll_id: SCROLL_ID
-      scroll: '1m'
+  ss =
+    scroll_id: SCROLL_ID
+    scroll: '1m'
+  if program.q2
+    par.json = ss
+  else
+    par.qs = ss
+    par.json = true
   #logger.debug 'fetch %j', par
   request par, (err, resp, body) ->
     return callback null, [] if not body

@@ -1,6 +1,6 @@
 {
   "name": "es-search",
-  "version": "0.6.2",
+  "version": "0.6.3",
   "description": "simple tool for es query cli",
   "main": "index.js",
   "scripts": {
